@@ -10,4 +10,5 @@
 ## Llamados a la API
 
 Primero un llamado para armar el paginador, cargando los primeros 20 pokemones (esto último se puede modificar para que sean más por página)
+Los pokemones se pueden presentar en una lista o directamente en "Cards" de bootstrap.
 Luego, al hacer click en un pokemon particular de la lista, abrir una nueva ¿tarjeta? con información y una foto del pokemon.
