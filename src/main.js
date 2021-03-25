@@ -1,19 +1,11 @@
 
 
-function mostrarDetallesPokemon() {
-    //Armar con "popovers" de bootstrap, ver que necesita jQuery
-    /*
-    A mostrar:
-    ID
-    Tipo de pokemon
-    Peso
-    Altura
-    Skills?
-    Categoría
-    Forma?
-    Color?
-    */
-}
+$(function(){
+    // Enables popover
+    $("[data-toggle=popover]").popover();
+});
+
+
 
 function borrarPokemonesCargados() {
 
@@ -21,7 +13,6 @@ function borrarPokemonesCargados() {
 
 function manejarPaginador() {
     /*
-
     Para armar el paginador, con cada página tengo que ir sumando 20 al offset.
     O sea,
     Pagina 1: https://pokeapi.co/api/v2/pokemon/?limit=20
@@ -52,25 +43,50 @@ function armarHomePokemones() {
             $title.textContent = dataAPI.results[index].name;
         })
 
+        document.querySelectorAll('button').forEach(($button, index) => {
+            $button.id = dataAPI.results[index].url;
+        })
+
         document.querySelectorAll('.card-img-top').forEach(($img, index) => {
             $img.src = `images/${index+1}.png` //ver como no usar index pero si algun ID de la API cosa de poder reutilizar la function
-        })
-        
-        
-
-        document.querySelectorAll('.btn').forEach(($boton, index) => {
-            console.log(dataAPI.results[index].name)
-            $boton.id = dataAPI.results[index].name;
         })
     })
 }
 
+function mostrarDetallesPokemon($boton) {
+    //Armar con "popovers" de bootstrap, ver que necesita jQuery
+    /*
+    A mostrar:
+    ID
+    Tipo de pokemon
+    Peso
+    Altura
+    Skills?
+    Categoría
+    Forma?
+    Color?
+    */
+
+    console.log($boton.id)
+    fetch($boton.id)
+    .then(response => response.json())
+    .then(dataAPI => {
+        console.log(dataAPI.types[0].type.name);
+
+
+        //Nombre del pokemon: dataAPI.forms[0].name
+        //Tipo de pokemon: dataAPI.types[0].type.name
+    })
+}
+
+document.querySelectorAll('button').forEach($boton => {
+    $boton.onclick = function() {
+        mostrarDetallesPokemon($boton)
+    };
+})
+
 armarHomePokemones();
 
-$(function(){
-    // Enables popover
-    $("[data-toggle=popover]").popover();
-});
 
 
 /*
