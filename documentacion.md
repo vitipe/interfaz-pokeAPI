@@ -17,4 +17,9 @@ Luego, al hacer click en un pokemon particular de la lista, abrir una nueva ¿ta
     para el fecth a la API.
 [] Agregar en base al fetch la cantidad de pokemones (como para marcar que hay 1118)
 [] Me gustaría armar un input donde agregues el pokemon y te salga una página con toda la info como ese ejemplo que había visto en react
+[] Poner la primera letra de los nombres de los pokemón en mayúscula
 
+
+25/3/21
+-Ver si usar popovers es la estrategia correcta. Por lo visto se hacen on the fly y no es tan facil de editar como parecia.
+-La otra es ver de crear un innerHTML con todo el contenido entero y mandarlo y fue
