@@ -36,4 +36,9 @@ Ejemplo de estructura de popover
     title="Cargando..." 
     data-content="">Detalles</button>
               </div>
+
+
+
+
+              // let indexAPI = urlAPI.match(/\d{2}/g)[0];
 */
