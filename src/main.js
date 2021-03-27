@@ -21,22 +21,18 @@ function armarHomePokemones(urlAPI) {
         let indexURL = 0;
 
         if (urlAPI !== "https://pokeapi.co/api/v2/pokemon/") {
-            indexURL = Number(urlAPI.match(/\d{2}/g)[0]);
+            indexURL = Number(urlAPI.match(/\d{2,4}/g)[0]); //globalmente todos los números entre 2 y 4 dígitos en el index "0"
         }
-        
 
         document.querySelectorAll('.card-title').forEach(($title, index) => {
             $title.textContent = dataAPI.results[index].name;
         })
        
-        console.log(urlAPI)
-
         if (urlAPI === "https://pokeapi.co/api/v2/pokemon/") {
             document.querySelector('#li-previous').className = "page-item disabled"
             document.querySelectorAll('.card-img-top').forEach(($img, index) => {
                 $img.src = `images/${index+1}.png` //ver como no usar index pero si algun ID de la API cosa de poder reutilizar la function
                 // $img.alt = `foto ${dataAPI.results[index].name}`
-                console.log("if", index)
                 // urlAPI.match(/\d{2}/g)[0];
             })
         }
@@ -45,7 +41,6 @@ function armarHomePokemones(urlAPI) {
             document.querySelectorAll('.card-img-top').forEach(($img, index) => {
                 $img.src = `images/${index+1}.png` //ver como no usar index pero si algun ID de la API cosa de poder reutilizar la function
                 // $img.alt = `foto ${dataAPI.results[index].name}`
-                console.log("else if", index)
                 // urlAPI.match(/\d{2}/g)[0];
             })
         } else {
@@ -54,7 +49,6 @@ function armarHomePokemones(urlAPI) {
                 $img.src = `images/${indexURL+1}.png` //ver como no usar index pero si algun ID de la API cosa de poder reutilizar la function
                 // $img.alt = `foto ${dataAPI.results[indexURL].name}`
                 indexURL += 1;
-                console.log("else", indexURL)
     
                 // urlAPI.match(/\d{2}/g)[0];
             })
