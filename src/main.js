@@ -25,7 +25,7 @@ function armarHomePokemones(urlAPI) {
         }
 
         document.querySelectorAll('.card-title').forEach(($title, index) => {
-            $title.textContent = dataAPI.results[index].name;
+            $title.textContent = capitalizeFirstLetter(dataAPI.results[index].name);
         })
        
         if (urlAPI === "https://pokeapi.co/api/v2/pokemon/") {
@@ -79,7 +79,7 @@ function mostrarDetallesPokemon($boton) {
             }
         })
 
-        popover.config.title = dataAPI.name;
+        popover.config.title = capitalizeFirstLetter(dataAPI.name) ;
         popover.config.content = `<b>ID:</b> #${dataAPI.id}<br />
                                 <b>Peso:</b> ${dataAPI.weight / 10} kgs.<br />
                                 <b>Altura:</b> ${dataAPI.height / 10} m.<br />
@@ -95,6 +95,20 @@ function mostrarDetallesPokemon($boton) {
     })
 }
 
+function manejarPaginador() {
+    document.querySelector('#boton-previous').onclick = function() {
+        armarHomePokemones(previousPage)
+    }
+    
+    document.querySelector('#boton-next').onclick = function() {
+        armarHomePokemones(nextPage)
+    }
+    
+    document.querySelector('#boton-inicio').onclick = function() {
+        armarHomePokemones('https://pokeapi.co/api/v2/pokemon/');
+    }
+}
+
 document.querySelectorAll('a').forEach($boton => {
     $boton.onclick = function() {
         mostrarDetallesPokemon($boton)
@@ -105,14 +119,11 @@ iniciarControladorPopover();
 
 armarHomePokemones('https://pokeapi.co/api/v2/pokemon/');
 
-document.querySelector('#boton-previous').onclick = function() {
-    armarHomePokemones(previousPage)
-}
+manejarPaginador(); 
 
-document.querySelector('#boton-next').onclick = function() {
-    armarHomePokemones(nextPage)
-}
 
-document.querySelector('#boton-inicio').onclick = function() {
-    armarHomePokemones('https://pokeapi.co/api/v2/pokemon/');
+let pokemon = "pikachu"
+
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
 }
