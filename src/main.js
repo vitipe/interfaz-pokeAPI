@@ -1,11 +1,11 @@
-let previousPage = "";
-let nextPage = "";
+let anteriorPagina = "";
+let siguientePagina = "";
 
-function iniciarControladorPopover() {  
+function iniciarControladorPopover() {
     $(function () {
         $('[data-toggle="popover"]').popover()
     })
-
+    //Con esto el popover se cierra cuando se clickea en cualquier parte del sitio
     $('.popover-dismiss').popover({
         trigger: 'focus'
     })
@@ -15,93 +15,88 @@ function armarHomePokemones(urlAPI) {
     fetch(urlAPI)
     .then(response => response.json())
     .then(dataAPI => {
-
-        previousPage = dataAPI.previous;
-        nextPage = dataAPI.next;
-        let indexURL = 0;
+        anteriorPagina = dataAPI.previous;
+        siguientePagina = dataAPI.next;
+        let indexPokemonPagina;
 
         if (urlAPI !== "https://pokeapi.co/api/v2/pokemon/") {
-            indexURL = Number(urlAPI.match(/\d{2,4}/g)[0]); //globalmente todos los números entre 2 y 4 dígitos en el index "0"
+            //Globalmente todos los números entre 2 y 4 dígitos en el index "0".
+            indexPokemonPagina = Number(urlAPI.match(/\d{2,4}/g)[0]); 
         }
 
         document.querySelectorAll('.card-title').forEach(($title, index) => {
-            $title.textContent = capitalizeFirstLetter(dataAPI.results[index].name);
+            $title.textContent = mayusculaPrimerLetra(dataAPI.results[index].name);
         })
        
         if (urlAPI === "https://pokeapi.co/api/v2/pokemon/") {
             document.querySelector('#li-previous').className = "page-item disabled"
             document.querySelectorAll('.card-img-top').forEach(($img, index) => {
-                $img.src = `images/${index+1}.png` //ver como no usar index pero si algun ID de la API cosa de poder reutilizar la function
-                // $img.alt = `foto ${dataAPI.results[index].name}`
-                // urlAPI.match(/\d{2}/g)[0];
+                //A lo que es la primer página se puede usar un index predeterminado desde "0".
+                $img.src = `images/${index+1}.png`
             })
         }
         else if (urlAPI === "https://pokeapi.co/api/v2/pokemon/?offset=0&limit=20"){
+            //En el caso de que el usuario aprete siguiente y vuelva a la primer página, cambia el link.
             document.querySelector('#li-previous').className = "page-item disabled"
             document.querySelectorAll('.card-img-top').forEach(($img, index) => {
-                $img.src = `images/${index+1}.png` //ver como no usar index pero si algun ID de la API cosa de poder reutilizar la function
-                // $img.alt = `foto ${dataAPI.results[index].name}`
-                // urlAPI.match(/\d{2}/g)[0];
+                $img.src = `images/${index+1}.png`
             })
         } else {
             document.querySelectorAll('.card-img-top').forEach(($img) => {
                 document.querySelector('#li-previous').className = "page-item"
-                $img.src = `images/${indexURL+1}.png` //ver como no usar index pero si algun ID de la API cosa de poder reutilizar la function
-                // $img.alt = `foto ${dataAPI.results[indexURL].name}`
-                indexURL += 1;
-    
-                // urlAPI.match(/\d{2}/g)[0];
+                $img.src = `images/${indexPokemonPagina+1}.png`
+                // $img.alt = `foto ${dataAPI.results[indexPokemonPagina].name}`; ESTO NO ANDA.
+                indexPokemonPagina += 1;
             })
         }
-        
-
-        document.querySelectorAll('a').forEach(($button, index) => {
-            $button.id = dataAPI.results[index].url;
-        })
-
-        
+        //Recorre el array de pokemones y le saca el URL a cada uno para usarlo como link al apretar "Detalles"
+        document.querySelectorAll('a').forEach(($botonDetalles, index) => {
+            //No estoy seguro si el target es el lugar para alojar este tipo de enlaces.
+            $botonDetalles.target = dataAPI.results[index].url;
+        })  
     })
 }
 
-function mostrarDetallesPokemon($boton) {
-
-    fetch($boton.id)
+//Al clickear en el botón "Detalles" abre un popover con toda la data organizada
+function mostrarDetallesPokemon($pokemonClickeado) {
+    fetch($pokemonClickeado.target)
     .then(response => response.json())
     .then(dataAPI => {
-        let popover = $($boton).data('bs.popover');
-
+        let $popover = $($pokemonClickeado).data('bs.popover');
         let tiposPokemon = "";
+
+        //A lo que un pokemon puede tener más de un "type" es necesario concatenar los que tenga
         dataAPI.types.forEach((type, index) => {
             tiposPokemon += dataAPI.types[index].type.name
             
+            //Para que sólo agregue un "+" entre palabras y no al final del string
             if (index < (dataAPI.types.length - 1)) {
                 tiposPokemon += " + "
             }
         })
-
-        popover.config.title = capitalizeFirstLetter(dataAPI.name) ;
-        popover.config.content = `<b>ID:</b> #${dataAPI.id}<br />
+        $popover.config.title = mayusculaPrimerLetra(dataAPI.name) ;
+        $popover.config.content = `<b>ID:</b> #${dataAPI.id}<br />
                                 <b>Peso:</b> ${dataAPI.weight / 10} kgs.<br />
                                 <b>Altura:</b> ${dataAPI.height / 10} m.<br />
-                                <b>Tipo:</b> ${tiposPokemon}<br />
+                                <b>Tipo:</b> ${mayusculaPrimerLetra(tiposPokemon)}<br />
                                 <b>HP:</b> ${dataAPI.stats[0].base_stat}<br />
                                 <b>Ataque:</b> ${dataAPI.stats[1].base_stat}<br />
                                 <b>Defensa:</b> ${dataAPI.stats[2].base_stat}<br />
                                 <b>Ataque especial:</b> ${dataAPI.stats[3].base_stat}<br />
                                 <b>Defensa especial:</b> ${dataAPI.stats[4].base_stat}<br />
                                 <b>Velocidad:</b> ${dataAPI.stats[5].base_stat}<br />`;
-        popover.config.html = true;
-        popover.show();
+        $popover.config.html = true; //Necesario para que no tome los elementos html de arriba como parte del string
+        $popover.show(); //Para que el popover se abra con la data actualizada. Necesario el "focus" ya que si no no se cierra.
     })
 }
 
 function manejarPaginador() {
     document.querySelector('#boton-previous').onclick = function() {
-        armarHomePokemones(previousPage)
+        armarHomePokemones(anteriorPagina)
     }
     
     document.querySelector('#boton-next').onclick = function() {
-        armarHomePokemones(nextPage)
+        armarHomePokemones(siguientePagina)
     }
     
     document.querySelector('#boton-inicio').onclick = function() {
@@ -109,9 +104,13 @@ function manejarPaginador() {
     }
 }
 
-document.querySelectorAll('a').forEach($boton => {
-    $boton.onclick = function() {
-        mostrarDetallesPokemon($boton)
+function mayusculaPrimerLetra(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+document.querySelectorAll('a').forEach($botonDetalles => {
+    $botonDetalles.onclick = function() {
+        mostrarDetallesPokemon($botonDetalles)
     };
 })
 
@@ -119,11 +118,4 @@ iniciarControladorPopover();
 
 armarHomePokemones('https://pokeapi.co/api/v2/pokemon/');
 
-manejarPaginador(); 
-
-
-let pokemon = "pikachu"
-
-function capitalizeFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-}
+manejarPaginador();
