@@ -2,10 +2,11 @@ let anteriorPagina = "";
 let siguientePagina = "";
 
 function iniciarControladorPopover() {
+    //Con esto hace que se inicialicen todos los popovers.
     $(function () {
         $('[data-toggle="popover"]').popover()
     })
-    //Con esto el popover se cierra cuando se clickea en cualquier parte del sitio
+    //Con esto el popover se cierra cuando se clickea en cualquier parte afuera del popover, si no quedaría siempre abierto
     $('.popover-dismiss').popover({
         trigger: 'focus'
     })
@@ -36,7 +37,7 @@ function armarHomePokemones(urlAPI) {
             })
         }
         else if (urlAPI === "https://pokeapi.co/api/v2/pokemon/?offset=0&limit=20"){
-            //En el caso de que el usuario aprete siguiente y vuelva a la primer página, cambia el link.
+            //En el caso de que el usuario aprete siguiente y vuelva a la primer página, cambia el link del "home".
             document.querySelector('#li-previous').className = "page-item disabled"
             document.querySelectorAll('.card-img-top').forEach(($img, index) => {
                 $img.src = `images/${index+1}.png`
@@ -49,15 +50,13 @@ function armarHomePokemones(urlAPI) {
                 indexPokemonPagina += 1;
             })
         }
-        //Recorre el array de pokemones y le saca el URL a cada uno para usarlo como link al apretar "Detalles"
+        //Recorre el array de pokemones de la API y le saca el URL a cada uno para usarlo como link al apretar "Detalles"
         document.querySelectorAll('a').forEach(($botonDetalles, index) => {
-            //No estoy seguro si el target es el lugar para alojar este tipo de enlaces.
-            $botonDetalles.target = dataAPI.results[index].url;
+            $botonDetalles.target = dataAPI.results[index].url; //No estoy seguro si el target es el lugar para alojar este tipo de enlaces.
         })  
     })
 }
 
-//Al clickear en el botón "Detalles" abre un popover con toda la data organizada
 function mostrarDetallesPokemon($pokemonClickeado) {
     fetch($pokemonClickeado.target)
     .then(response => response.json())
@@ -65,13 +64,13 @@ function mostrarDetallesPokemon($pokemonClickeado) {
         let $popover = $($pokemonClickeado).data('bs.popover');
         let tiposPokemon = "";
 
-        //A lo que un pokemon puede tener más de un "type" es necesario concatenar los que tenga
+        //A lo que un pokemon puede tener más de un "type" es necesario concatenar los que tenga:
         dataAPI.types.forEach((type, index) => {
             tiposPokemon += dataAPI.types[index].type.name
             
-            //Para que sólo agregue un "+" entre palabras y no al final del string
+            //Para que sólo agregue un "+" entre palabras y no al final del string:
             if (index < (dataAPI.types.length - 1)) {
-                tiposPokemon += " + "
+                tiposPokemon += " + ";
             }
         })
         $popover.config.title = mayusculaPrimerLetra(dataAPI.name) ;
@@ -86,7 +85,8 @@ function mostrarDetallesPokemon($pokemonClickeado) {
                                 <b>Defensa especial:</b> ${dataAPI.stats[4].base_stat}<br />
                                 <b>Velocidad:</b> ${dataAPI.stats[5].base_stat}<br />`;
         $popover.config.html = true; //Necesario para que no tome los elementos html de arriba como parte del string
-        $popover.show(); //Para que el popover se abra con la data actualizada. Necesario el "focus" ya que si no no se cierra.
+        $popover.show();//Para que el popover se abra con la data actualizada y no haya que clickear dos veces. 
+        //Necesario el "focus" ya que si no no se cierra. 
     })
 }
 
