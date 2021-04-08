@@ -56,13 +56,14 @@ function armarHomePokemones(urlAPI) {
       // Recorre el array de pokemones de la API y le saca el URL a cada uno para usarlo
       // como link al apretar "Detalles"
       document.querySelectorAll('a').forEach(($botonDetalles, index) => {
-        $botonDetalles.target = dataAPI.results[index].url; // No estoy seguro si el target es el lugar para alojar este tipo de enlaces.
+        // No estoy seguro si el target es el lugar para alojar este tipo de enlaces.
+        $botonDetalles.dataset.url = dataAPI.results[index].url;
       });
     });
 }
 
 function mostrarDetallesPokemon($pokemonClickeado) {
-  fetch($pokemonClickeado.target)
+  fetch($pokemonClickeado.dataset.url)
     .then((response) => response.json())
     .then((dataAPI) => {
       const $popover = $($pokemonClickeado).data('bs.popover');
@@ -88,8 +89,10 @@ function mostrarDetallesPokemon($pokemonClickeado) {
                                 <b>Ataque especial:</b> ${dataAPI.stats[3].base_stat}<br />
                                 <b>Defensa especial:</b> ${dataAPI.stats[4].base_stat}<br />
                                 <b>Velocidad:</b> ${dataAPI.stats[5].base_stat}<br />`;
-      $popover.config.html = true; // Necesario para que no tome los elementos html de arriba como parte del string
-      $popover.show();// Para que el popover se abra con la data actualizada y no haya que clickear dos veces.
+      // Necesario para que no tome los elementos html de arriba como parte del string
+      $popover.config.html = true;
+      // Para que el popover se abra con la data actualizada y no haya que clickear dos veces.
+      $popover.show();
       // Necesario el "focus" ya que si no no se cierra.
     });
 }
