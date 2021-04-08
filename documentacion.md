@@ -7,6 +7,11 @@
 3. Listar pokemones, y poder cambiar de página
 4. Ver detalles de 1 pokemón, incluyendo al menos 1 foto.
 
+
+## Sobre jQuery
+jQuery se instala con "npm i jquery"
+Y se pone el script en el html abajo del todo pero encima del .js nuestro 
+
 ## Llamados a la API
 
 Primero un llamado para armar el paginador, cargando los primeros 20 pokemones (esto último se puede modificar para que sean más por página)

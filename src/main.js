@@ -13,12 +13,18 @@ function iniciarControladorPopover() {
 }
 
 function armarHomePokemones(urlAPI) {
+    //Esto de acá abajo solo sirve para cuando llegan al final, en el inicio están los dos casos posibles a continuación
+    if (urlAPI === null){
+        return;
+    }
     fetch(urlAPI)
     .then(response => response.json())
     .then(dataAPI => {
         anteriorPagina = dataAPI.previous;
         siguientePagina = dataAPI.next;
         let indexPokemonPagina;
+
+        
 
         if (urlAPI !== "https://pokeapi.co/api/v2/pokemon/") {
             //Globalmente todos los números entre 2 y 4 dígitos en el index "0".

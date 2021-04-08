@@ -1,3 +1,4 @@
+/// <reference types="Cypress" />
 
 //Me parece que lo que es pruebas de los llamados a la API y eso lo explica después Fabricios 
 //Creo que se utiliza cy.intercept o cy.request
