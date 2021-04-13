@@ -6,14 +6,16 @@ function iniciarControladorPopover() {
   $(() => {
     $('[data-toggle="popover"]').popover();
   });
-  // Con esto el popover se cierra cuando se clickea en cualquier parte afuera del popover, si no quedaría siempre abierto
+  // Con esto el popover se cierra cuando se clickea en cualquier parte afuera del popover,
+  // si no quedaría siempre abierto
   $('.popover-dismiss').popover({
     trigger: 'focus',
   });
 }
 
 function armarHomePokemones(urlAPI) {
-  // Esto de acá abajo solo sirve para cuando llegan al final, en el inicio están los dos casos posibles a continuación
+  // Esto de acá abajo solo sirve para cuando llegan al final,
+  // en el inicio están los dos casos posibles a continuación
   if (urlAPI === null) {
     return;
   }
@@ -40,7 +42,10 @@ function armarHomePokemones(urlAPI) {
           $img.src = `images/${index + 1}.png`;
         });
       } else if (urlAPI === 'https://pokeapi.co/api/v2/pokemon/?offset=0&limit=20') {
-        // En el caso de que el usuario aprete siguiente y vuelva a la primer página, cambia el link del "home".
+        /*
+        En el caso de que el usuario aprete siguiente y vuelva a la primer página,
+        cambia el link del "home".
+        */
         document.querySelector('#li-previous').className = 'page-item disabled';
         document.querySelectorAll('.card-img-top').forEach(($img, index) => {
           $img.src = `images/${index + 1}.png`;
