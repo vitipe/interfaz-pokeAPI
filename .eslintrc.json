@@ -2,7 +2,8 @@
 {
     "env": {
         "browser": true,
-        "es2021": true
+        "es2021": true,
+        "jquery": true
     },
     "extends": [
         "airbnb-base"
@@ -22,6 +23,8 @@
               "ts": "never",
               "tsx": "never"
             }
-         ]
+         ],
+        "func-names": 0,
+        "no-param-reassign": 0
     }
 }
