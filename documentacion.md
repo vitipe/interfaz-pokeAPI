@@ -23,3 +23,7 @@ Luego, al hacer click en un pokemon particular de la lista, abrir una nueva ¿ta
 [] Agregar en base al fetch la cantidad de pokemones (como para marcar que hay 1118)
 [] Me gustaría armar un input donde agregues el pokemon y te salga una página con toda la info como ese ejemplo que había visto en react
 [x] Poner la primera letra de los nombres de los pokemón en mayúscula
+
+## NOTAS
+-El paginador funciona bastante lento, y sería porque el valor del botón paginador se lo da el fetch a la API, por lo cual
+a lo que el fetch tarda un toque en realidad al clickear varias veces seguidas "siguiente" por ejemplo en realidad no avanza mucho.

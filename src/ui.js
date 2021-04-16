@@ -1,9 +1,9 @@
-import fetchearAPI from './exchange.js';
+import fetchearAPI from './api.js';
 
 let anteriorPagina = '';
 let siguientePagina = '';
 
-function mayusculaPrimerLetra(string) {
+export function mayusculaPrimerLetra(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
@@ -17,6 +17,38 @@ export function iniciarControladorPopover() {
   $('.popover-dismiss').popover({
     trigger: 'focus',
   });
+}
+
+export async function mostrarDetallesPokemon($pokemonClickeado) {
+  const dataPokemon = await fetchearAPI($pokemonClickeado.dataset.url);
+  const $popover = $($pokemonClickeado).data('bs.popover');
+  let tiposPokemon = '';
+
+  // A lo que un pokemon puede tener más de un "type" es necesario concatenar los que tenga:
+  dataPokemon.types.forEach((type, index) => {
+    tiposPokemon += dataPokemon.types[index].type.name;
+
+    // Para que sólo agregue un "+" entre palabras y no al final del string:
+    if (index < (dataPokemon.types.length - 1)) {
+      tiposPokemon += ' + ';
+    }
+  });
+  $popover.config.title = mayusculaPrimerLetra(dataPokemon.name);
+  $popover.config.content = `<b>ID:</b> #${dataPokemon.id}<br />
+                              <b>Peso:</b> ${dataPokemon.weight / 10} kgs.<br />
+                              <b>Altura:</b> ${dataPokemon.height / 10} m.<br />
+                              <b>Tipo:</b> ${mayusculaPrimerLetra(tiposPokemon)}<br />
+                              <b>HP:</b> ${dataPokemon.stats[0].base_stat}<br />
+                              <b>Ataque:</b> ${dataPokemon.stats[1].base_stat}<br />
+                              <b>Defensa:</b> ${dataPokemon.stats[2].base_stat}<br />
+                              <b>Ataque especial:</b> ${dataPokemon.stats[3].base_stat}<br />
+                              <b>Defensa especial:</b> ${dataPokemon.stats[4].base_stat}<br />
+                              <b>Velocidad:</b> ${dataPokemon.stats[5].base_stat}<br />`;
+  // Necesario para que no tome los elementos html de arriba como parte del string
+  $popover.config.html = true;
+  // Para que el popover se abra con la data actualizada y no haya que clickear dos veces.
+  $popover.show();
+  // Necesario el "focus" ya que si no no se cierra.
 }
 
 export async function armarHomePokemones(urlAPI) {
@@ -65,36 +97,12 @@ export async function armarHomePokemones(urlAPI) {
   });
 }
 
-export async function mostrarDetallesPokemon($pokemonClickeado) {
-  const dataAPI = await fetchearAPI($pokemonClickeado.dataset.url);
-  const $popover = $($pokemonClickeado).data('bs.popover');
-  let tiposPokemon = '';
-
-  // A lo que un pokemon puede tener más de un "type" es necesario concatenar los que tenga:
-  dataAPI.types.forEach((type, index) => {
-    tiposPokemon += dataAPI.types[index].type.name;
-
-    // Para que sólo agregue un "+" entre palabras y no al final del string:
-    if (index < (dataAPI.types.length - 1)) {
-      tiposPokemon += ' + ';
-    }
+export function asignarBotonDetalles() {
+  document.querySelectorAll('a').forEach(($botonDetalles) => {
+    $botonDetalles.onclick = function () {
+      mostrarDetallesPokemon($botonDetalles);
+    };
   });
-  $popover.config.title = mayusculaPrimerLetra(dataAPI.name);
-  $popover.config.content = `<b>ID:</b> #${dataAPI.id}<br />
-                                <b>Peso:</b> ${dataAPI.weight / 10} kgs.<br />
-                                <b>Altura:</b> ${dataAPI.height / 10} m.<br />
-                                <b>Tipo:</b> ${mayusculaPrimerLetra(tiposPokemon)}<br />
-                                <b>HP:</b> ${dataAPI.stats[0].base_stat}<br />
-                                <b>Ataque:</b> ${dataAPI.stats[1].base_stat}<br />
-                                <b>Defensa:</b> ${dataAPI.stats[2].base_stat}<br />
-                                <b>Ataque especial:</b> ${dataAPI.stats[3].base_stat}<br />
-                                <b>Defensa especial:</b> ${dataAPI.stats[4].base_stat}<br />
-                                <b>Velocidad:</b> ${dataAPI.stats[5].base_stat}<br />`;
-  // Necesario para que no tome los elementos html de arriba como parte del string
-  $popover.config.html = true;
-  // Para que el popover se abra con la data actualizada y no haya que clickear dos veces.
-  $popover.show();
-  // Necesario el "focus" ya que si no no se cierra.
 }
 
 export function manejarPaginador() {
@@ -109,12 +117,4 @@ export function manejarPaginador() {
   document.querySelector('#boton-inicio').onclick = function () {
     armarHomePokemones('https://pokeapi.co/api/v2/pokemon/');
   };
-}
-
-export function asignarBotonDetalles() {
-  document.querySelectorAll('a').forEach(($botonDetalles) => {
-    $botonDetalles.onclick = function () {
-      mostrarDetallesPokemon($botonDetalles);
-    };
-  });
 }
