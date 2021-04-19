@@ -1,4 +1,4 @@
-import fetchearAPI from './api.js';
+import manejarDataPokemones from './api.js';
 
 let anteriorPagina = '';
 let siguientePagina = '';
@@ -18,12 +18,13 @@ export function iniciarControladorPopover() {
     trigger: 'focus',
   });
 }
+export function manejarPopover(popoverSeleccionado) {
+  const $popover = $(popoverSeleccionado).data('bs.popover');
+  return $popover;
+}
 
-export async function mostrarDetallesPokemon($pokemonClickeado) {
-  const dataPokemon = await fetchearAPI($pokemonClickeado.dataset.url);
-  const $popover = $($pokemonClickeado).data('bs.popover');
+export async function mostrarDetallesPokemon($popover, dataPokemon) {
   let tiposPokemon = '';
-
   // A lo que un pokemon puede tener más de un "type" es necesario concatenar los que tenga:
   dataPokemon.types.forEach((type, index) => {
     tiposPokemon += dataPokemon.types[index].type.name;
@@ -51,8 +52,7 @@ export async function mostrarDetallesPokemon($pokemonClickeado) {
   // Necesario el "focus" ya que si no no se cierra.
 }
 
-export async function armarHomePokemones(urlAPI) {
-  const dataAPI = await fetchearAPI(urlAPI);
+export function armarHomePokemones(urlAPI, dataAPI) {
   anteriorPagina = dataAPI.previous;
   siguientePagina = dataAPI.next;
   let indexPokemonPagina;
@@ -61,7 +61,6 @@ export async function armarHomePokemones(urlAPI) {
   // Globalmente todos los números entre 2 y 4 dígitos en el index "0".
     indexPokemonPagina = Number(urlAPI.match(/\d{2,4}/g)[0]);
   }
-
   document.querySelectorAll('.card-title').forEach(($title, index) => {
     $title.textContent = mayusculaPrimerLetra(dataAPI.results[index].name);
   });
@@ -97,24 +96,17 @@ export async function armarHomePokemones(urlAPI) {
   });
 }
 
-export function asignarBotonDetalles() {
-  document.querySelectorAll('a').forEach(($botonDetalles) => {
-    $botonDetalles.onclick = function () {
-      mostrarDetallesPokemon($botonDetalles);
-    };
-  });
-}
-
+// Esto sería lo único que tendría que sacar de aca así no importo nada de api.js
 export function manejarPaginador() {
-  document.querySelector('#boton-previous').onclick = function () {
-    armarHomePokemones(anteriorPagina);
+  document.querySelector('#boton-previous').onclick = async function () {
+    armarHomePokemones(anteriorPagina, await manejarDataPokemones(anteriorPagina));
   };
 
-  document.querySelector('#boton-next').onclick = function () {
-    armarHomePokemones(siguientePagina);
+  document.querySelector('#boton-next').onclick = async function () {
+    armarHomePokemones(siguientePagina, await manejarDataPokemones(siguientePagina));
   };
 
-  document.querySelector('#boton-inicio').onclick = function () {
-    armarHomePokemones('https://pokeapi.co/api/v2/pokemon/');
+  document.querySelector('#boton-inicio').onclick = async function () {
+    armarHomePokemones('https://pokeapi.co/api/v2/pokemon/', await manejarDataPokemones('https://pokeapi.co/api/v2/pokemon/'));
   };
 }
