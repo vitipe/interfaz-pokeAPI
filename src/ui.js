@@ -1,7 +1,7 @@
-import manejarDataPokemones from './api.js';
-
-let anteriorPagina = '';
-let siguientePagina = '';
+// Si bien los exporto como vacíos, como primero se corre armarHomePokemones antes de
+// que estos sean usados, esa function les agrega un value y ya quedan andando
+export let anteriorPagina = '';
+export let siguientePagina = '';
 
 export function mayusculaPrimerLetra(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -97,16 +97,3 @@ export function armarHomePokemones(urlAPI, dataAPI) {
 }
 
 // Esto sería lo único que tendría que sacar de aca así no importo nada de api.js
-export function manejarPaginador() {
-  document.querySelector('#boton-previous').onclick = async function () {
-    armarHomePokemones(anteriorPagina, await manejarDataPokemones(anteriorPagina));
-  };
-
-  document.querySelector('#boton-next').onclick = async function () {
-    armarHomePokemones(siguientePagina, await manejarDataPokemones(siguientePagina));
-  };
-
-  document.querySelector('#boton-inicio').onclick = async function () {
-    armarHomePokemones('https://pokeapi.co/api/v2/pokemon/', await manejarDataPokemones('https://pokeapi.co/api/v2/pokemon/'));
-  };
-}
